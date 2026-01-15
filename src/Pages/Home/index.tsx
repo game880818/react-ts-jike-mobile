@@ -15,7 +15,7 @@ const Home = () => {
           <Tabs.Tab title={item.name} key={item.id}>
             <div className="listContainer">
               {/* HomeList List */}
-              <HomeList />
+              <HomeList channel_id={'' + item.id} />
             </div>
           </Tabs.Tab>
         ))}

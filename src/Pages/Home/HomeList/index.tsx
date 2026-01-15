@@ -1,20 +1,26 @@
 import { Image, List } from 'antd-mobile'
-// mock数据
-import { users } from './users.ts'
+// import { users } from './users.ts'
 import { useEffect, useState } from 'react'
 import { getArticleListAPI, type listItem } from '@/api/list.tsx'
 
-const HomeList = () => {
+type HomeListProps = {
+  channel_id: string,
+}
+
+const HomeList = (props: HomeListProps) => {
+  const { channel_id } = props
   const [list, setList] = useState<listItem[]>([])
+
   useEffect(() => {
     async function getList() {
       const res = await getArticleListAPI({
-        channel_id: '0',
+        channel_id: channel_id,
         timestamp: '' + new Date().getTime()
       })
       console.log(res)
       setList(res.data.data.results)
     }
+
     getList()
   }, [])
   return (
@@ -32,7 +38,7 @@ const HomeList = () => {
                 height={40}
               />
             }
-            description={item.title}
+            description={item.pubdate}
           >
             {item.aut_name}
           </List.Item>
