@@ -1,6 +1,8 @@
 import { Image, List, InfiniteScroll } from 'antd-mobile'
 // import { users } from './users.ts'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+// api
 import { getArticleListAPI, type listResType } from '@/api/list.tsx'
 
 type HomeListProps = {
@@ -8,6 +10,8 @@ type HomeListProps = {
 }
 
 const HomeList = (props: HomeListProps) => {
+  const navigate = useNavigate()
+
   const { channel_id } = props
   const [listRes, setListRes] = useState<listResType>({
     results: [],
@@ -52,6 +56,10 @@ const HomeList = (props: HomeListProps) => {
       throw new Error('fetch infiniteScroll list error')
     }
   }
+
+  const toDetail = (articleId: string) => {
+    navigate(`/detail?id=${articleId}`)
+  }
   return (
     <>
       <List>
@@ -68,6 +76,7 @@ const HomeList = (props: HomeListProps) => {
               />
             }
             description={item.pubdate}
+            onClick={() => toDetail(item.art_id)}
           >
             {item.aut_name}
           </List.Item>
