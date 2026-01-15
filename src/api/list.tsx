@@ -34,7 +34,7 @@ export interface listItem {
   },
 }
 
-interface listResType {
+export interface listResType {
   results: listItem[],
   pre_timestamp: string
 }

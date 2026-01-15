@@ -1,7 +1,7 @@
-import { Image, List } from 'antd-mobile'
+import { Image, List, InfiniteScroll } from 'antd-mobile'
 // import { users } from './users.ts'
 import { useEffect, useState } from 'react'
-import { getArticleListAPI, type listItem } from '@/api/list.tsx'
+import { getArticleListAPI, type listResType } from '@/api/list.tsx'
 
 type HomeListProps = {
   channel_id: string,
@@ -9,24 +9,53 @@ type HomeListProps = {
 
 const HomeList = (props: HomeListProps) => {
   const { channel_id } = props
-  const [list, setList] = useState<listItem[]>([])
+  const [listRes, setListRes] = useState<listResType>({
+    results: [],
+    pre_timestamp: '' + new Date().getTime()
+  })
 
   useEffect(() => {
     async function getList() {
-      const res = await getArticleListAPI({
-        channel_id: channel_id,
-        timestamp: '' + new Date().getTime()
-      })
-      console.log(res)
-      setList(res.data.data.results)
+      try {
+        const res = await getArticleListAPI({
+          channel_id: channel_id,
+          timestamp: '' + new Date().getTime(),
+        })
+        setListRes(res.data.data)
+      } catch (error) {
+        throw new Error('fetch list error')
+      }
     }
-
     getList()
   }, [])
+
+  const [hasMore, setHasMore] = useState(true)
+  const loadMore = async () => {
+    try {
+      const res = await getArticleListAPI({
+        channel_id: channel_id,
+        timestamp: listRes.pre_timestamp,
+      })
+      // 新しいデータがない場合、hasMoreをfalseにする
+      if (res.data.data.results.length === 0) {
+        setHasMore(false)
+      }
+
+      setListRes({
+        // 新しいデータを追加で、組み合わせる
+        results: [...listRes.results, ...res.data.data.results],
+        // 前回のpre_timestampを使って、次の請求をする
+        pre_timestamp: res.data.data.pre_timestamp
+      })
+
+    } catch (error) {
+      throw new Error('fetch infiniteScroll list error')
+    }
+  }
   return (
     <>
       <List>
-        {list.map((item) => (
+        {listRes.results.map((item) => (
           <List.Item
             key={item.art_id}
             prefix={
@@ -44,6 +73,7 @@ const HomeList = (props: HomeListProps) => {
           </List.Item>
         ))}
       </List>
+      <InfiniteScroll loadMore={loadMore} hasMore={hasMore} threshold={10} />
     </>
   )
 }
