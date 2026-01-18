@@ -1,4 +1,4 @@
-import { NavBar, Space, Avatar, Button, Divider, TabBar } from 'antd-mobile';
+import { NavBar, Space, Avatar, Button, Divider } from 'antd-mobile';
 import {
   MoreOutline,
   HeartOutline,
