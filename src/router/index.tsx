@@ -11,6 +11,6 @@ const router = createBrowserRouter([
     path: '/detail',
     element: <Detail />,
   },
-])
+], { basename: "/react-ts-jike-mobile", })
 
 export default router
